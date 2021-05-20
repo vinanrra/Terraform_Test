@@ -5,6 +5,7 @@ terraform {
     # since new versions are released frequently
     docker = {
       source  = "kreuzwerker/docker"
+      # If not especify will choose latest
       version = "2.11.0"
     }
   }
@@ -18,6 +19,7 @@ terraform {
 # SOURCE -> https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image
 resource "docker_image" "nginx" {
   name         = "linuxserver/swag"
+  # If true image will persist after "terraform destroy"
   keep_locally = false
 }
 
@@ -31,10 +33,13 @@ resource "docker_container" "nginx" {
     docker_network.network_nginx,
   ]
 
+  # Container name
   name    = "Nginx"
 
+  # Image to use with tag at the end
   image   = docker_image.nginx.latest
 
+  # This is from docker | Restart container unless stopped manually
   restart = "unless-stopped"
 
   # If not present container will be just created and not started
@@ -43,8 +48,10 @@ resource "docker_container" "nginx" {
   # If false Terraform will be "OK" even if container doesnt start
   must_run = "true"
 
+  # Enviroments of the container check image docs to know more
   env = ["TZ=Europe/Madrid"]
 
+  # Ports must create one per port
   ports {
       # Container port
       internal = 443
@@ -68,8 +75,10 @@ resource "docker_container" "nginx" {
       host_path = "/Users/vinanrra/Documents/Terraform_Test/Docker/Nginx/config"
   }
 
+  # RAM memory of the container
   memory = 512
 
+  # The network where container will be created
   networks_advanced {
       name = "nginx"
       aliases = ["nginx_container"]
