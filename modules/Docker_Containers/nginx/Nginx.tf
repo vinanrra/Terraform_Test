@@ -30,7 +30,6 @@ resource "docker_container" "nginx" {
   # Depends on docker image to avoid create container before image gets pull
   depends_on = [
     docker_image.nginx,
-    docker_network.network_nginx,
   ]
 
   # Container name

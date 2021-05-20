@@ -14,14 +14,29 @@ terraform {
 provider "docker" {
 }
 
+module "docker_networks" {
+  source  = "./modules/Docker_Networks"
+}
 module "docker_container_darkhold" {
   source  = "./modules/Docker_Containers/darkhold"
+  depends_on = [
+    module.docker_networks.network_darkhold,
+  ]
+
+  # Assing variable to variable inside module
+  # Syntax:
+  # MODULE_VAR = VAR_REFERENCE_FROM_MAIN.TF
+  darkhold_image_version = var.darkhold_image_version
+  darkhold_container_name = var.darkhold_container_name
+  darkhold_container_restart = var.darkhold_container_restart
+  darkhold_container_externalPort = var.darkhold_container_externalPort
+  darkhold_container_volumePath = var.darkhold_container_volumePath
+  darkhold_container_memory = var.darkhold_container_memory
 }
 
 module "docker_container_nginx" {
   source  = "./modules/Docker_Containers/nginx"
-}
-
-module "docker_networks" {
-  source  = "./modules/Docker_Networks"
+  depends_on = [
+    module.docker_networks.network_nginx,
+  ]
 }

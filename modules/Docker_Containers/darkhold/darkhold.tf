@@ -18,7 +18,7 @@ terraform {
 # SOURCE -> https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image
 resource "docker_image" "darkhold" {
   # Name of the image
-  name         = "surajcm/darkhold"
+  name         = "surajcm/darkhold:${var.darkhold_image_version}" # With ${} will get variable string if used between ""
   # If true image will persist after "terraform destroy"
   keep_locally = false
 }
@@ -30,17 +30,16 @@ resource "docker_container" "darkhold" {
   # Depends on docker image to avoid create container before image gets pull
   depends_on = [
     docker_image.darkhold,
-    docker_network.network_darkhold,
   ]
 
   # Container name
-  name    = "Darkhold_Kahoot"
+  name    = var.darkhold_container_name
 
   # Image to use with tag at the end
-  image   = docker_image.darkhold.latest
+  image   = docker_image.darkhold.name
 
   # This is from docker | Restart container unless stopped manually
-  restart = "unless-stopped"
+  restart = var.darkhold_container_restart
 
   # If not present container will be just created and not started
   start = "true"
@@ -53,7 +52,7 @@ resource "docker_container" "darkhold" {
       # Container port
       internal = 8181
       # Host port
-      external = 8181
+      external = var.darkhold_container_externalPort
       # If not define the default is TCP
       protocol = "tcp"
   }
@@ -61,11 +60,11 @@ resource "docker_container" "darkhold" {
   # Volume to bind container with host
   volumes {
       container_path = "/tmp/db"
-      host_path = "/Users/vinanrra/Documents/Terraform_Test/Docker/Darkhold/db"
+      host_path = var.darkhold_container_volumePath
   }
 
   # RAM memory of the container
-  memory = 512
+  memory = var.darkhold_container_memory
 
   # The network where container will be created
   networks_advanced {
