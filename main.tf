@@ -39,4 +39,12 @@ module "docker_container_nginx" {
   depends_on = [
     module.docker_networks.network_nginx,
   ]
+
+  nginx_image_version = var.nginx_image_version
+  nginx_container_name = var.nginx_container_name
+  nginx_container_restart = var.nginx_container_restart
+  nginx_container_externalPort_443 = var.nginx_container_externalPort_443
+  nginx_container_externalPort_80 = var.nginx_container_externalPort_80
+  nginx_container_volumePath_config = var.nginx_container_volumePath_config
+  nginx_container_memory = var.nginx_container_memory
 }

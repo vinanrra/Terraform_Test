@@ -18,7 +18,7 @@ terraform {
 #   }
 # SOURCE -> https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image
 resource "docker_image" "nginx" {
-  name         = "linuxserver/swag"
+  name         = "linuxserver/swag:${var.nginx_image_version}"
   # If true image will persist after "terraform destroy"
   keep_locally = false
 }
@@ -33,13 +33,13 @@ resource "docker_container" "nginx" {
   ]
 
   # Container name
-  name    = "Nginx"
+  name    = var.nginx_container_name
 
   # Image to use with tag at the end
-  image   = docker_image.nginx.latest
+  image   = docker_image.nginx.name
 
   # This is from docker | Restart container unless stopped manually
-  restart = "unless-stopped"
+  restart = var.nginx_container_restart
 
   # If not present container will be just created and not started
   start = "true"
@@ -55,7 +55,7 @@ resource "docker_container" "nginx" {
       # Container port
       internal = 443
       # Host port
-      external = 443
+      external = var.nginx_container_externalPort_443
       # If not define the default is TCP
       protocol = "tcp"
   }
@@ -64,18 +64,18 @@ resource "docker_container" "nginx" {
       # Container port
       internal = 80
       # Host port
-      external = 80
+      external = var.nginx_container_externalPort_80
       # If not define the default is TCP
       protocol = "tcp"
   }
 
   volumes {
       container_path = "/config"
-      host_path = "/Users/vinanrra/Documents/Terraform_Test/Docker/Nginx/config"
+      host_path = var.nginx_container_volumePath_config
   }
 
   # RAM memory of the container
-  memory = 512
+  memory = var.nginx_container_memory
 
   # The network where container will be created
   networks_advanced {
