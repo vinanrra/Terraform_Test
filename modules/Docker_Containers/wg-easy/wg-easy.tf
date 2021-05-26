@@ -5,6 +5,7 @@ terraform {
     # since new versions are released frequently
     docker = {
       source  = "kreuzwerker/docker"
+      # If not especify will choose latest
       version = "2.11.0"
     }
   }
@@ -16,30 +17,29 @@ terraform {
 #     VARS
 #   }
 # SOURCE -> https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image
-resource "docker_image" "darkhold" {
-  # Name of the image
-  name         = "surajcm/darkhold:${var.darkhold_image_version}" # With ${} will get variable string if used between ""
+resource "docker_image" "wgeasy" {
+  name         = "weejewel/wg-easy:${var.wgeasy_image_version}"
   # If true image will persist after "terraform destroy"
   keep_locally = false
 }
 
 # Create a docker container resource
 # SOURCE -> https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container
-resource "docker_container" "darkhold" {
+resource "docker_container" "wgeasy" {
 
   # Depends on docker image to avoid create container before image gets pull
   depends_on = [
-    docker_image.darkhold,
+    docker_image.wgeasy,
   ]
 
   # Container name
-  name    = var.darkhold_container_name
+  name    = var.wgeasy_container_name
 
   # Image to use with tag at the end
-  image   = docker_image.darkhold.name
+  image   = docker_image.wgeasy.name
 
   # This is from docker | Restart container unless stopped manually
-  restart = var.darkhold_container_restart
+  restart = var.wgeasy_container_restart
 
   # If not present container will be just created and not started
   start = "true"
@@ -47,28 +47,15 @@ resource "docker_container" "darkhold" {
   # If false Terraform will be "OK" even if container doesnt start
   must_run = "true"
 
-  # Ports must create one per port
-  ports {
-      # Container port
-      internal = 8181
-      # Host port
-      external = var.darkhold_container_externalPort
-      # If not define the default is TCP
-      protocol = "tcp"
-  }
-
-  # Volume to bind container with host
-  volumes {
-      container_path = "/tmp/db"
-      host_path = var.darkhold_container_volumePath
-  }
+  
 
   # RAM memory of the container
-  memory = var.darkhold_container_memory
+  memory = var.wgeasy_container_memory
 
   # The network where container will be created
   networks_advanced {
-      name = var.darkhold_container_network
-      aliases = ["darkhold_Container"]
+      name = var.wgeasy_container_network
+      aliases = ["wgeasy_container"]
   }
+
 }

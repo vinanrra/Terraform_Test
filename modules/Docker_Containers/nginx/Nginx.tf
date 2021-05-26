@@ -48,7 +48,22 @@ resource "docker_container" "nginx" {
   must_run = "true"
 
   # Enviroments of the container check image docs to know more
-  env = ["TZ=Europe/Madrid"]
+  env = ["PUID=${var.nginx_container_env_puid}",
+         "PGID=${var.nginx_container_env_pgid}",
+         "TZ=${var.nginx_container_env_tz}",
+         "URL=${var.nginx_container_env_url}",
+         "SUBDOMAINS=${var.nginx_container_env_subdomains}",
+         "VALIDATION=${var.nginx_container_env_validation}",
+         "CERTPROVIDER=${var.nginx_container_env_certprovider}",
+         "DNSPLUGIN=${var.nginx_container_env_dnsplugin}",
+         "PROPAGATION=${var.nginx_container_env_propagation}",
+         "DUCKDNSTOKEN=${var.nginx_container_env_duckdnstoken}",
+         "EMAIL=${var.nginx_container_env_email}",
+         "ONLY_SUBDOMAINS=${var.nginx_container_env_onlySubdomains}",
+         "EXTRA_DOMAINS=${var.nginx_container_env_extraDomains}",
+         "STAGING=${var.nginx_container_env_staging}",
+         "MAXMINDDB_LICENSE_KEY=${var.nginx_container_env_maxminddbLicenseKey}"
+         ]
 
   # Ports must create one per port
   ports {
@@ -79,7 +94,7 @@ resource "docker_container" "nginx" {
 
   # The network where container will be created
   networks_advanced {
-      name = "nginx"
-      aliases = ["nginx_container"]
+      name = var.nginx_container_network
+      aliases = ["nginx_Container"]
   }
 }

@@ -27,3 +27,8 @@ variable "darkhold_container_memory" {
     type = string
     description = "The maximum amount of memory the container can use."
 }
+
+variable "darkhold_container_network" {
+    type = string
+    description = "Network where container will be."
+}
